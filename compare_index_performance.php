@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
 require 'db.php';
 
