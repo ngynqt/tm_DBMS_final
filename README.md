@@ -1,23 +1,24 @@
-# DBMS Shop - E-Commerce Application
+# DBMS Shop - Hệ thống bán hàng trực tuyến
 
-A modern, fully-functional e-commerce web application built with PHP, MySQL, and Vanilla JavaScript. Features complete product management, shopping cart, user authentication, and order processing.
+Ứng dụng e-commerce hiệu năng cao với bộ lọc sản phẩm tối ưu được xây dựng bằng PHP + MySQL + JavaScript vanilla.
 
-![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen) ![License](https://img.shields.io/badge/License-MIT-blue) ![PHP](https://img.shields.io/badge/PHP-7%2B-blue) ![MySQL](https://img.shields.io/badge/MySQL-5.7%2B-blue)
+![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen) ![Language](https://img.shields.io/badge/Language-PHP%2FMySQL%2FJS-blue) ![Products](https://img.shields.io/badge/Products-41%2C573-orange)
 
-## 🌟 Features
+## 🚀 Tính năng chính
 
-✨ **Product Management**
-- Display products from MySQL database
-- Real-time search by name, brand, or description
-- Product filtering with pagination (20 products per page)
-- Discount calculation and rating display
-- Support for 6+ product categories
+✅ **Bộ lọc sản phẩm tối ưu**
+- Tìm kiếm full-text theo tên sản phẩm
+- Lọc theo khoảng giá (VND)
+- Lọc theo thương hiệu (817 brands)
+- Lọc theo đánh giá (1-5 sao)
+- Áp dụng tức thời - không cần click "Apply"
+- Hiển thị thời gian query (⏱️ Hiệu năng)
 
-🛒 **Shopping Cart**
-- Add/remove products
-- Manage quantities
-- Persistent storage using localStorage
-- Real-time price calculation
+🛒 **Giỏ hàng & Xác thực**
+- Thêm/xóa sản phẩm
+- Quản lý số lượng
+- Hệ thống đăng nhập/đăng ký
+- Lưu trữ giỏ hàng (localStorage)
 - Cart count badge in header
 
 👤 **User Authentication**

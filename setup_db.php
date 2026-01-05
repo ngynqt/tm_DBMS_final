@@ -33,13 +33,34 @@ $sql_products = "CREATE TABLE IF NOT EXISTS products (
     brand VARCHAR(100),
     review_count INT DEFAULT 0,
     rating_average FLOAT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_price (price),
+    INDEX idx_brand (brand),
+    INDEX idx_rating (rating_average),
+    INDEX idx_review (review_count),
+    FULLTEXT INDEX idx_name_search (name),
+    FULLTEXT INDEX idx_desc_search (description)
 )";
 
 if (mysqli_query($conn, $sql_products)) {
     echo "✓ Products table created<br>";
 } else {
     echo "Error: " . mysqli_error($conn) . "<br>";
+}
+
+// Add additional composite indexes for common filter combinations
+$indexes = [
+    "CREATE INDEX IF NOT EXISTS idx_price_rating ON products(price, rating_average)",
+    "CREATE INDEX IF NOT EXISTS idx_brand_price ON products(brand, price)",
+    "CREATE INDEX IF NOT EXISTS idx_price_range ON products(price, review_count)"
+];
+
+foreach ($indexes as $idx_sql) {
+    if (mysqli_query($conn, $idx_sql)) {
+        echo "✓ Index created<br>";
+    } else {
+        echo "Index Error: " . mysqli_error($conn) . "<br>";
+    }
 }
 
 // Create users table
