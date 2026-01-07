@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # MySQL Master - Port 3308 (changed from 3306 to avoid local MySQL conflict)
+  mysql-master:
+    image: mysql:8.0
+    container_name: mysql-master
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: my_store
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: dbpassword
+    ports:
+      - "3308:3306" # Host 3308 → Container 3306
+    volumes:
+      - mysql-master-data:/var/lib/mysql
+      - ./docker/mysql-master/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./docker/init_replication.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - mysql-network
+    command: --default-authentication-plugin=mysql_native_password
+
+  # MySQL Slave - Port 3307
+  mysql-slave:
+    image: mysql:8.0
+    container_name: mysql-slave
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: my_store
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: dbpassword
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-slave-data:/var/lib/mysql
+      - ./docker/mysql-slave/my.cnf:/etc/mysql/conf.d/my.cnf
+    networks:
+      - mysql-network
+    command: --default-authentication-plugin=mysql_native_password
+    depends_on:
+      - mysql-master
+
+volumes:
+  mysql-master-data:
+    driver: local
+  mysql-slave-data:
+    driver: local
+
+networks:
+  mysql-network:
+    driver: bridge

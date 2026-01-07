@@ -1,37 +1,55 @@
 <?php
 session_start();
-$host = "127.0.0.1";
-$user = "root";
-$pass = ""; 
-$dbname = "my_store";
 
-// Connect
-$conn = mysqli_connect($host, $user, $pass, $dbname);
+$master_host = "127.0.0.1";
+$master_port = 3308;
+$master_user = "root";
+$master_pass = "rootpassword";
+$master_dbname = "my_store";
 
-// Check connection before setting charset
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+$slave_host = "127.0.0.1";
+$slave_port = 3307;
+$slave_user = "root";
+$slave_pass = "rootpassword";
+$slave_dbname = "my_store";
+
+$conn_master = @mysqli_connect($master_host, $master_user, $master_pass, $master_dbname, $master_port);
+
+if (!$conn_master) {
+    $conn_master = @mysqli_connect("127.0.0.1", "root", "", "my_store");
+    $conn_slave = $conn_master;
+    $conn = $conn_master;
+} else {
+    mysqli_set_charset($conn_master, "utf8mb4");
+    $conn_slave = @mysqli_connect($slave_host, $slave_user, $slave_pass, $slave_dbname, $slave_port);
+    if (!$conn_slave) {
+        $conn_slave = $conn_master;
+    } else {
+        mysqli_set_charset($conn_slave, "utf8mb4");
+    }
+    $conn = $conn_master;
 }
 
-// If connection successful, set charset
-mysqli_set_charset($conn, "utf8mb4");
-=======
-<?php
-session_start();
-$host = "127.0.0.1";
-$user = "root";
-$pass = ""; 
-$dbname = "my_store";
-
-// Connect
-$conn = mysqli_connect($host, $user, $pass, $dbname);
-
-// Check connection before setting charset
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+function getWriteConnection()
+{
+    global $conn_master;
+    return $conn_master;
 }
 
-// If connection successful, set charset
-mysqli_set_charset($conn, "utf8mb4");
->>>>>>> 5f79eaeba4311ce083ded1cf198a4a984c0b8b86
+function getReadConnection()
+{
+    global $conn_slave;
+    return $conn_slave;
+}
+
+function executeQuery($query, $use_master = null)
+{
+    global $conn_master, $conn_slave;
+    if ($use_master === null) {
+        $query_upper = strtoupper(trim($query));
+        $use_master = (strpos($query_upper, 'INSERT') === 0 || strpos($query_upper, 'UPDATE') === 0 || strpos($query_upper, 'DELETE') === 0);
+    }
+    $conn = $use_master ? $conn_master : $conn_slave;
+    return mysqli_query($conn, $query);
+}
 ?>
